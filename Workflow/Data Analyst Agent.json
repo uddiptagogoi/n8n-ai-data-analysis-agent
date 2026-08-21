@@ -1,0 +1,197 @@
+{
+  "name": "Data Analyst Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nI am your Data Analyst Agent. How can I assist you today?",
+        "options": {
+          "inputPlaceholder": "Type your question..",
+          "responseMode": "lastNode"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -880,
+        -128
+      ],
+      "id": "5b3da2da-5f0b-409e-b08f-2998898e8cd0",
+      "name": "When chat message received",
+      "webhookId": "17cbdea1-b8b6-4f5e-871d-d82ad9985876"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -576,
+        -128
+      ],
+      "id": "af7533ad-c19d-4b66-b86d-a0fa427064a3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -752,
+        16
+      ],
+      "id": "b98e966a-c0dd-4de7-8714-005a44d5e44f",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "M2xdkucYR8TJ4QMN",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        -512,
+        32
+      ],
+      "id": "d734eb15-9721-4cf7-a65a-971900506323",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d48b35ca-4f7f-4102-9b42-919614ae2ca1",
+              "name": "reply",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -192,
+        -128
+      ],
+      "id": "6a24fb1d-258c-4ddf-80b4-feeccbf040e2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1E21ny9MfsnoI1u_-QxqYGtfL64m3EMzdE8lcIME0ls4/edit?usp=drivesdk",
+          "__regex": "https:\\/\\/(?:drive|docs)\\.google\\.com(?:\\/.*|)\\/d\\/([0-9a-zA-Z\\-_]+)(?:\\/.*|)"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 595292483,
+          "mode": "list",
+          "cachedResultName": "spotify_data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1E21ny9MfsnoI1u_-QxqYGtfL64m3EMzdE8lcIME0ls4/edit#gid=595292483"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -272,
+        16
+      ],
+      "id": "fd3f5abc-4cf6-4e25-986a-cf631ea03482",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tZnnqmkT8rkdHUaX",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "bb5e0ff9-8944-482d-851e-c20073e1dbd6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7b0b3e92a26ac8a16e3522a4e348ea9d6047ceca5a8490fc7635c79f4ffcc83c"
+  },
+  "nodeGroups": [],
+  "id": "msaso1u2ZALPFEfV",
+  "tags": []
+}
